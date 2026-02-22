@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erysngl | Developer Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --surface-color: #171717;
+            --accent-color: #00ffcc;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Dil Seçici Menü */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+        .lang-btn {
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+        .lang-btn:hover, .lang-btn.active {
+            color: var(--accent-color);
+        }
+        .lang-sep { color: #555; margin: 0 5px; }
+
+        header {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, #111 0%, var(--bg-color) 100%);
+            border-bottom: 1px solid #333;
+            position: relative;
+        }
+
+        h1 { font-size: 3rem; margin: 0; color: var(--text-primary); }
+        .highlight { color: var(--accent-color); }
+        .subtitle { font-size: 1.2rem; color: var(--text-secondary); margin-top: 10px; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+        .about-section {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-color);
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 { font-size: 2rem; border-bottom: 2px dashed #333; padding-bottom: 10px; margin-bottom: 30px; margin-top:0; }
+
+        .repo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        .repo-card {
+            background-color: var(--surface-color); border: 1px solid #333;
+            border-radius: 10px; padding: 20px; transition: transform 0.2s, border-color 0.2s;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .repo-card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+        .repo-name { font-size: 1.3rem; font-weight: bold; color: var(--text-primary); text-decoration: none; margin-bottom: 10px; display: inline-block; }
+        .repo-name:hover { color: var(--accent-color); }
+        .repo-desc { color: var(--text-secondary); font-size: 0.9rem; font-family: 'Segoe UI', sans-serif; margin-bottom: 15px; flex-grow: 1; }
+        .repo-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--accent-color); font-family: 'Segoe UI', sans-serif; font-weight: bold; }
+
+        .footer { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 0.9rem; border-top: 1px solid #333; margin-top: 50px; }
+        .loader { text-align: center; color: var(--accent-color); font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="lang-switcher">
+            <span class="lang-btn" onclick="setLang('tr')" id="btn-tr">TR</span>
+            <span class="lang-sep">|</span>
+            <span class="lang-btn" onclick="setLang('en')" id="btn-en">EN</span>
+        </div>
+        <h1><span class="highlight">~</span> erysngl <span class="highlight">_</span></h1>
+        <div class="subtitle" id="t-subtitle">Open Source Developer & Tech Enthusiast</div>
+    </header>
+
+    <div class="container">
+        <div class="about-section">
+            <h2 style="border:none; padding:0;">> whoami</h2>
+            <p style="font-family: 'Segoe UI', sans-serif;" id="t-about">
+                Hello! I'm a developer who loves building practical, lightweight, and dependency-free solutions for complex problems. In my free time, I enjoy configuring my own servers on Docker, optimizing my local home-server network, and developing open-source tools that push the boundaries of web technologies. Projects like YTM Keep-Alive are born from this sweet struggle against browser restrictions.
+            </p>
+        </div>
+
+        <h2 id="t-projects">> ls -la /projects</h2>
+        <div id="loading" class="loader">Fetching data from GitHub...</div>
+        <div id="repo-container" class="repo-grid"></div>
+    </div>
+
+    <div class="footer" id="t-footer">
+        &copy; 2026 erysngl | Built with pure DOM & GitHub API.
+    </div>
+
+    <script>
+        // --- 1. SÖZLÜK (ÇEVİRİ VERİTABANI) ---
+        const i18n = {
+            en: {
+                subtitle: "Open Source Developer & Tech Enthusiast",
+                about: "Hello! I'm a developer who loves building practical, lightweight, and dependency-free solutions for complex problems. In my free time, I enjoy configuring my own servers on Docker, optimizing my local home-server network, and developing open-source tools that push the boundaries of web technologies. Projects like YTM Keep-Alive are born from this sweet struggle against browser restrictions.",
+                projects: "> ls -la /projects",
+                loading: "Fetching data from GitHub...",
+                error: "An error occurred while loading projects.",
+                noDesc: "No description provided.",
+                footer: "&copy; 2026 erysngl | Built with pure DOM & GitHub API."
+            },
+            tr: {
+                subtitle: "Açık Kaynak Geliştirici & Teknoloji Tutkunu",
+                about: "Merhaba! Ben karmaşık sorunlara pratik, hafif ve eklentisiz çözümler üretmeyi seven bir geliştiriciyim. Boş zamanlarımda Docker üzerinde kendi sunucularımı yapılandırmaktan, yerel ağ sistemlerini (home-server) optimize etmekten ve web teknolojilerinin sınırlarını zorlayan açık kaynaklı araçlar geliştirmekten büyük keyif alıyorum. YTM Keep-Alive gibi projeler, tarayıcı kısıtlamalarına karşı verdiğim bu tatlı mücadelenin birer ürünüdür.",
+                projects: "> ls -la /projeler",
+                loading: "GitHub'dan veriler çekiliyor...",
+                error: "Projeler yüklenirken bir hata oluştu.",
+                noDesc: "Açıklama bulunmuyor.",
+                footer: "&copy; 2026 erysngl | Saf DOM ve GitHub API ile oluşturuldu."
+            }
+        };
+
+        let currentLang = 'en';
+
+        // --- 2. DİL ALGILAMA VE DEĞİŞTİRME MANTIĞI ---
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // Metinleri Güncelle
+            document.getElementById('t-subtitle').innerHTML = i18n[lang].subtitle;
+            document.getElementById('t-about').innerHTML = i18n[lang].about;
+            document.getElementById('t-projects').innerHTML = i18n[lang].projects;
+            document.getElementById('t-footer').innerHTML = i18n[lang].footer;
+            
+            // Buton Stillerini Güncelle
+            document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            
+            // HTML lang niteliğini güncelle
+            document.documentElement.lang = lang;
+
+            // GitHub Repolarını O Dile Göre Tekrar Çek/Güncelle
+            fetchRepos();
+        }
+
+        // Kullanıcının tarayıcı diline göre başlangıç dilini belirle
+        function initLang() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (browserLang.toLowerCase().includes('tr')) {
+                setLang('tr');
+            } else {
+                setLang('en');
+            }
+        }
+
+        // --- 3. GITHUB API ENTEGRASYONU ---
+        const username = 'erysngl'; 
+        const repoContainer = document.getElementById('repo-container');
+        const loading = document.getElementById('loading');
+
+        async function fetchRepos() {
+            repoContainer.innerHTML = ''; // Önceki içeriği temizle
+            loading.style.display = 'block';
+            loading.textContent = i18n[currentLang].loading;
+
+            try {
+                const response = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=6`);
+                const repos = await response.json();
+                
+                loading.style.display = 'none';
+
+                repos.forEach(repo => {
+                    if (!repo.fork) {
+                        const card = document.createElement('div');
+                        card.className = 'repo-card';
+                        card.innerHTML = `
+                            <div>
+                                <a href="${repo.html_url}" target="_blank" class="repo-name">${repo.name}</a>
+                                <div class="repo-desc">${repo.description || i18n[currentLang].noDesc}</div>
+                            </div>
+                            <div class="repo-stats">
+                                <span>⭐ ${repo.stargazers_count}</span>
+                                <span>🔀 ${repo.forks_count}</span>
+                                <span>${repo.language ? '💻 ' + repo.language : ''}</span>
+                            </div>
+                        `;
+                        repoContainer.appendChild(card);
+                    }
+                });
+            } catch (error) {
+                loading.textContent = i18n[currentLang].error;
+                console.error('GitHub API Error:', error);
+            }
+        }
+
+        // Sayfa yüklendiğinde sistemi başlat
+        initLang();
+    </script>
+</body>
+</html>
