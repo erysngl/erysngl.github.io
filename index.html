@@ -188,7 +188,7 @@
                 loading.style.display = 'none';
 
                 repos.forEach(repo => {
-                    if (!repo.fork) {
+                    if (!repo.fork && repo.name !== 'erysngl.github.io') {
                         const card = document.createElement('div');
                         card.className = 'repo-card';
                         card.innerHTML = `
